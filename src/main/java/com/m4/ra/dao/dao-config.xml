@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	     http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	     http://www.springframework.org/schema/tx
+	     http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<!-- Configuration for the persistence layer of the smart-test-system application. 
+		Contains definitions of beans dealing with the database. -->
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:com/m4/ra/dao/db.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+		destroy-method="close">
+
+		<property name="driverClassName" value="${jdbc.driver.className}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		
+		<property name="initialSize" value="${jdbc.dbcp.initialSize}" />
+		<property name="maxTotal" value="${jdbc.dbcp.maxTotal}" />
+		<property name="maxIdle" value="${jdbc.dbcp.maxIdle}" />
+		<property name="minIdle" value="${jdbc.dbcp.minIdle}" />
+		<property name="maxWaitMillis" value="${jdbc.dbcp.maxWaitMillis}" />
+		<property name="defaultAutoCommit" value="${jdbc.dbcp.defaultAutoCommit}" />
+		<property name="removeAbandonedOnBorrow" value="${jdbc.dbcp.removeAbandonedOnBorrow}" />
+		<property name="removeAbandonedTimeout" value="${jdbc.dbcp.removeAbandonedTimeout}" />
+		<property name="logAbandoned" value="${jdbc.dbcp.logAbandoned}" />
+	</bean>
+
+	<!-- ********** Add Hibernate Support *********** -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<!--property name="packagesToScan" value="com.intacct.iacpa.dao" / -->
+		<!-- property name="packagesToScan"> <list> <value>com.intacct.iacpa.model</value> 
+			</list> </property -->
+		<property name="annotatedClasses">
+			<list>
+				<value>com.m4.ra.model.User</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${jdbc.hibernate.dialect}</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<!-- uncomment this for first time run  
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
+				-->
+
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- A transaction manager for working with Hibernate SessionFactories -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+
+	<tx:annotation-driven transaction-manager="transactionManager"
+		proxy-target-class="true" />
+
+	<!-- All DAO classes declarations go here -->
+	<bean id="userDao" class="com.m4.ra.dao.UserDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+</beans>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	     http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	     http://www.springframework.org/schema/tx
+	     http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<!-- 
+	  Configuration for the persistence layer of the smart-test-system application.
+	  Contains definitions of service beans.
+	-->
+
+   <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+
+<!--
+   <bean id="testProcessorService" class="com.intacct.iacpa.service.TestProcessorServiceImpl">
+       
+      <property name="testClassDao" ref="testClassDao"/>
+      <property name="testCoverageDao" ref="testCoverageDao"/>
+      <property name="testBundleDao" ref="testBundleDao"/>
+      <property name="coverageModuleDao" ref="coverageModuleDao"/> 
+      <property name="moduleFactory" ref="moduleFactory"/>
+      <property name="clnClassMappingDao" ref="clnClassMappingDao"/>
+      
+      
+   </bean>
+-->
+</beans>
